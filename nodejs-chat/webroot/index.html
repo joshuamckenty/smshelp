@@ -1,0 +1,46 @@
+<html>
+<head>
+	<title>Node.js Heroku Chat</title>
+	<style>
+		#chatMessages {
+			margin: 3px 5px 3px 5px;
+			width: 750;
+			height: 500;
+			border: 1px #333333 inset;
+			overflow: auto;
+		}
+		#inputArea {
+			padding: 5px;
+		}
+		#wrapper {
+			width: 770;
+			border: 3px black solid;
+		}
+		#debug {
+			position: absolute;
+			bottom: 5px;
+			left: 5px;
+			height: 100;
+			width: 80%;
+			overflow: auto;
+		}
+	</style>
+</head>
+<body>
+	<h1>Node.js Heroku Chat</h1>
+	<div id="wrapper">
+		<div id="chatMessages"></div>
+		<div id="inputArea">
+			<input type="text" name="entry" id="entry" size="95" />
+			<input type="submit" value="Send" id="sendBtn" />
+		</div>
+	</div>
+	
+	<div id="debug"></div>
+</body>
+<script src="chat.js"></script>
+<script src="json_parse.js"></script>
+<script>
+	window.onload = chat.start;
+</script>
+</html>
