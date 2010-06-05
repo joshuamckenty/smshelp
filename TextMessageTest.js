@@ -29,19 +29,5 @@
 	
 	test();
 
-	function requestHandler(req, res) {
-		
-		var message = url.parse(request.url);
-		
-		DeliverMessage(req)
-	
-		res.writeHead(200, {'Content-Type': 'text/plain'});
-		res.end(req);
 
-	}
-	
-	
-	function DeliverMessage(){}
-	
-	
 	
