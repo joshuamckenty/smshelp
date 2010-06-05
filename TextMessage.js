@@ -2,8 +2,8 @@
 exports.TextMessage = function (jsonState){
 	
 	var that = this;
-	var stateWrapper = { _private : {	from: "", fcity: "", fstate: "", fzip: "",
-	 									to: "", tcity: "", tstate: "", tzip	: "", 
+	var stateWrapper = { _private : {	from: "", fcity: "", fstate: "", fzip: "", fcountry: "",
+	 									to: "", tcity: "", tstate: "", tzip	: "", tcountry: "",
 										body: "",
 	 									twilosmssid: "",
 	 									twiloacctid:""
@@ -23,11 +23,13 @@ exports.TextMessage = function (jsonState){
 	this.FromCity = makeGetSet(stateWrapper, "fcity");
 	this.FromState = makeGetSet(stateWrapper,"fstate");
 	this.FromZip = makeGetSet(stateWrapper,"fzip");
+	this.FromCountry = makeGetSet(stateWrapper,"fcountry");
 	
 	this.ToPhone = makeGetSet(stateWrapper,"to");
 	this.ToCity = makeGetSet(stateWrapper,"tcity");
 	this.ToState = makeGetSet(stateWrapper,"tstate");
 	this.ToZip = makeGetSet(stateWrapper,"tzip");
+	this.ToCountry = makeGetSet(stateWrapper,"tcountry");
 	
 	this.Body = makeGetSet(stateWrapper,"body");
 	

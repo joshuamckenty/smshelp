@@ -3,7 +3,9 @@ var http = require('http'),
 	path = require('path'),
 	sys = require('sys'),
 	url = require('url'),
-	events = require('events');
+	tm = require('./TextMessage'),
+	events = require('events'),
+        client = require("./redis-client").createClient();
 	
 // setup some local variables we need
 var PORT = process.env.PORT || 4000,
@@ -30,6 +32,19 @@ http.createServer(function (req, res) {
                         case 'med':
                         case 'medical':
                             sys.log('Sending medical instructions')
+                            // Create Session if it doesn't exist
+                            channelName = "med." + request.query.From;
+		            var message = new tm.TextMessage();
+		            message.FromPhone(request.query.From).FromZip(request.query.FromZip);
+                            message.FromCity(request.query.FromCity).FromCountry(request.query.FromCountry);
+                            message.FromState(request.query.FromState).Body(request.query.Body);
+                            payload = message.Serialize(); 
+                            client.set("session:" + request.query.From, payload);
+			    client.publish(channelName, payload, 
+			      function (err, reply) {
+			        sys.puts("Published message to " + 
+				  (reply === 0 ? "no one" : (reply + " subscriber(s).")));
+			    });
                             body = "Snd: Patients NAME, AGE [#], SEX [M/F], LOCATION [Freeform]" 
                             sendTwimlSMSReply(res, request.query.From, body)
                             break
