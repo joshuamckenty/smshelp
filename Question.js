@@ -1,3 +1,5 @@
+var sys = require('sys');
+
 exports.Question = function Question() {
 
     var that = this;
@@ -15,9 +17,10 @@ exports.Question = function Question() {
     function nextQ(key) { return (stateWrapper["_private"].nextQuestion[key]); }
     function addQ(key, q) { stateWrapper["_private"].nextQuestion[key] = q; }
     function getNextQuestion(tm) {
+       sys.log("Getting question for response of " + tm.Body())
 
-        var next = nextQ("") | nextQ(tm.Body().toLowerCase());
-
+        // var next = nextQ("a") || nextQ(tm.Body().toLowerCase());
+        return nextQ("a")
         if (next) {
             return (next);
         } else {
@@ -26,6 +29,7 @@ exports.Question = function Question() {
     }
 
     function addQuestion(resp, question) {
+        sys.log("Adding response for 'resp'" + resp);
         addQ(resp, question);
     }
 
