@@ -6,7 +6,7 @@ function main() {
 
     sys.puts("Server Started.");
 
-    var survey = new mp.MessageProcessor("skills", riskDT.BuildingSurveyDecisionTree());
+    var survey = new mp.MessageProcessor("skills", riskDT.SkillsSurveyDecisionTree());
 
     survey.Start();
 }
