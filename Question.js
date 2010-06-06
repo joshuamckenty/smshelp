@@ -1,7 +1,7 @@
 exports.Question = function() {
 
     var that = this;
-    var stateWrapper = { _private: { query: "", nextQuestion: {}};
+    var stateWrapper = { _private: { query: "", nextQuestion: {}} };
 
     function makeGetSet(obj, key) {
         return (function(value) {
@@ -12,28 +12,27 @@ exports.Question = function() {
         });
     }
 
-    function nextQ(key){return(stateWrapper["_private"].nextQuestion[key]);}
-    function addQ(key, q){stateWrapper["_private"].nextQuestion[key] = q;}
-    function getNextQuestion(tm){
-    
+    function nextQ(key) { return (stateWrapper["_private"].nextQuestion[key]); }
+    function addQ(key, q) { stateWrapper["_private"].nextQuestion[key] = q; }
+    function getNextQuestion(tm) {
+
         var next = nextQ("") | nextQ(tm.Body().toLower());
-        
-        if(next){
-            return(next);
-        }else{
-            return(null);
+
+        if (next) {
+            return (next);
+        } else {
+            return (null);
         }
-   }
-   
-    function addQuestion(resp, question){
+    }
+
+    function addQuestion(resp, question) {
         addQ(resp, question);
     }
 
 
-    this.Query = makeGetSet(stateWrapper, "query"); 
+    this.Query = makeGetSet(stateWrapper, "query");
     this.NextQuestion = getNextQuestion;
     this.AddNextQuestion = addQuestion;
 
-    this.MakeQuestion = function(){return(new Question());}
-
 };
+
