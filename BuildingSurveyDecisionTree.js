@@ -53,6 +53,7 @@ exports.BuildingSurveyDecisionTree = function() {
         var nextQ;
         
         if(nextQuestion){
+            sys.log('Getting next message for nextQuestion');
             nextQ= nextQuestion.NextQuestion(currentMessage);
         }else{
             return(null);
@@ -64,6 +65,7 @@ exports.BuildingSurveyDecisionTree = function() {
         }else{
             return(null);
         }
+        return txtMsg;
     }
 
     this.LoadMessages = loadMessages;
