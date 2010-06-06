@@ -52,44 +52,19 @@ http.createServer(function (req, res) {
 	message.FromPhone(request.query.From).FromZip(request.query.FromZip);
 	message.FromCity(request.query.FromCity).FromCountry(request.query.FromCountry);
 	message.FromState(request.query.FromState).Body(request.query.Body);
+        sid = "session:" + request.query.From
+        message.Sid(sid)
         payload = message.Serialize(); 
-        client.set("session:" + request.query.From, payload);
+        client.lpush(sid, payload);
         if (method == 'help') {
 	   sys.log('Sending instructions')
 	   body = "Please send: (m)edical, (r)isk, (d)isaster, or (s)killz." 
 	   sendTwimlSMSReply(res, request.query.From, body)
         } else {
           channelName = method + "." + request.query.From;
+          sys.log('Sending to ' + channelName);
           client.publish(channelName, payload);
         }
-        /*
-	switch(method) {
-                        case 'medical':
-                            sys.log('Sending medical instructions')
-		            var message = new tm.TextMessage();
-                            message.ToPhone(request.query.From).FromPhone("6503183775")
-                            message.Body("Snd: Patients NAME, AGE [#], SEX [M/F], LOCATION [Freeform]") 
-			    client.publish("outbound.foo", message.Serialize()); 
-                            break;
-                        case 'risk':
-                            sys.log('Sending risk instructions')
-                            // Create Session if it doesn't exist
-                            channelName = "risk." + request.query.From;
-                            payload = message.Serialize(); 
-                            client.set("session:" + request.query.From, payload);
-			    client.publish(channelName, payload);
-		            var message = new tm.TextMessage();
-                            message.ToPhone(request.query.From).FromPhone("6503183775")
-                            message.Body("Snd: Location, Building Size (floors), Materials") 
-			    client.publish("outbound.foo", message.Serialize() ); 
-                            break;
-			case 'help':
-			default:
-                            sys.log('Sending instructions')
-                            body = "Please send: (m)edical, (r)isk, (d)isaster, or (s)killz." 
-                            sendTwimlSMSReply(res, request.query.From, body)
-	}
-        */	
 // listen on the PORT defined in the environment or 4000 if not provided
 }).listen(parseInt(PORT, 10));
 

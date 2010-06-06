@@ -1,11 +1,14 @@
-
+var sys = require("sys");
 exports.BuildingSurveyDecisionTree = function() {
 
     var that = this;
 
-    var tm = new (require("./TextMessage");
-    
-    var questions = new (require("./Question")).Question
+    var tm = new require("./TextMessage");
+
+    var quest = require("./Question");
+
+    var questions = new quest.Question;
+
 
     var qStrings = ["What type of building is this? Reply with [H]ouse, [A]partment, [R]etail, [O]ffice, [W]arehouse, or [I]ndustrial.",
                     "How many stories does this building have? What is it made out of (eg, brick, wood, steel, etc.)?",
@@ -28,17 +31,24 @@ exports.BuildingSurveyDecisionTree = function() {
 
         for (var i = 1; i < qStrings.length; i++) {
 
-            next = previous.MakeQuestion();
+            next = new quest.Question();
             next.Query(qStrings[i]);
             previous.AddNextQuestion("", next);
             next = previous;
         }
+        sys.puts("constructed");
     }
 
-    function loadMessages(messageArray) {
+    var firstMessage = false;
 
-        if(messageArray.length > 0){
+    function loadMessages(messageArray) {
+        sys.puts("message load");
+        if (messageArray.length > 0) {
             nextQuestion = questions.NextQuestion(messageArray[0].Body());
+        } else {
+            firstMessage = true;
+            sys.puts("firstQuestion");
+            return;
         }
 
         for (var i = 1; i < messageArray.length; i++) {
@@ -46,24 +56,42 @@ exports.BuildingSurveyDecisionTree = function() {
                 nextQuestion = nextQuestion.NextQuestion(messageArray[i].Body());
             }
         }
+        sys.puts("messagesLoaded");
     }
-    
+
     function nextMessage(currentMessage) {
+        sys.puts("next message");
         var txtMsg = new tm.TextMessage();
         var nextQ;
-        
-        if(nextQuestion){
-            nextQ= nextQuestion.NextQuestion(currentMessage);
-        }else{
-            return(null);
+
+        sys.puts("firstmsg:" + firstMessage + " questions: " + questions);
+        if (firstMessage && questions) {
+
+            txtMsg.ToPhone(currentMessage.FromPhone());
+            txtMsg.Body(questions.Query());
+
+            sys.puts(txtMsg.Body());
+            sys.puts(txtMsg.ToPhone());
+
+            return (txtMsg);
+		}
+
+        firstMessage = false;
+
+        if (nextQuestion) {
+            sys.log('Getting next message for nextQuestion');
+            nextQ = nextQuestion.NextQuestion(currentMessage);
+        } else {
+            return (null);
         }
-        
-        if(nextQ){
+
+        if (nextQ) {
             txtMsg.ToPhone(currentMessage.FromPhone());
             txtMsg.Body(nextQ.Query());
-        }else{
-            return(null);
+        } else {
+            return (null);
         }
+        return txtMsg;
     }
 
     this.LoadMessages = loadMessages;
