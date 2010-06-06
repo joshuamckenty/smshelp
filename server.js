@@ -47,10 +47,11 @@ http.createServer(function(req, res) {
 
     session = client.get("session:" + request.query.From + ":method")
     if (session) {
-        method = session
+        method = session;
     } else if (method != 'help') {
         client.set("session:" + request.query.From + ":method", method);
-        client.incr("totals:sessions")
+        client.incr("totals:sessions:" + method);
+        client.incr("totals:sessions");
     }
     var message = new tm.TextMessage();
     message.FromPhone(request.query.From).FromZip(request.query.FromZip);
