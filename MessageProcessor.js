@@ -1,21 +1,22 @@
-var port = 6379;
-var host = "smshlp.org"
+var smsHelpDAL = new (require("./SMSHelpDAL")).DAL();
 
-var sys = require("sys");
-var redisClient = require("./redis-client").createClient(port, host);
+exports.MessageProcessor() = function(messageType, decisionTree) {
 
-redisClient.subscribeTo("med.*", handleMessage);
+    var port = 6379;
+    var host = "smshlp.org"
 
-function handleMessage(channel, message, subscriptionPattern) {
-    var output = "[" + channel;
-    if (subscriptionPattern)
-        output += " (from pattern '" + subscriptionPattern + "')";
-    output += "]: " + message;
-    sys.puts(output);
-    redisClient.close();
-}
+    function messageHandler(tm) {
+        SaveMessage(tm)
 
-exports.MessageProcessor(){
+        tmio.SendMessage(decisionTree.NextMessage(tm));
+        
+    }
 
 
-}
+    var tmio = new (require("./TextMessageIO")).TextMessageIO(host, port, messageType, messageHandler, "outbound");
+
+
+    this.Start = function() { tmio.Start(); };
+    this.Stop = function() { tmio.Stop(); };
+
+};
