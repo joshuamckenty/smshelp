@@ -10,15 +10,15 @@ exports.DecisionTree = function(questArray) {
     var questions = new quest.Question;
 
 
-    var qStrings = questArray 
-    
+    var qStrings = questArray
+
     var nextQuestion = null;
 
     function construct() {
 
         var previous = questions;
         var next = null;
-        
+
         for (var i = 0; i < qStrings.length; i++) {
 
             next = new quest.Question();
@@ -29,21 +29,12 @@ exports.DecisionTree = function(questArray) {
         sys.puts("constructed");
     }
 
-    var firstMessage = false;
-
     function loadMessages(messageArray) {
         sys.puts("message load");
-        if (messageArray.length > 0) {
-            nextQuestion = questions.NextQuestion(messageArray[0].Body());
-        } else {
-            firstMessage = true;
-            sys.puts("firstQuestion");
-            return;
-        }
-
-        for (var i = 1; i < messageArray.length; i++) {
+        nextQuestion = null;
+        for (var i = 0; i < messageArray.length; i++) {
             if (messageArray[i] && messageArray[i].Body && nextQuestion) {
-                nextQuestion = nextQuestion.NextQuestion(messageArray[i].Body());
+                nextQuestion = nextQuestion.NextQuestion(messageArray[i]);
             }
         }
         sys.puts("messagesLoaded");
@@ -55,18 +46,6 @@ exports.DecisionTree = function(questArray) {
         var nextQ;
 
         sys.puts("firstmsg:" + firstMessage + " questions: " + questions);
-        if (firstMessage && questions) {
-
-            txtMsg.ToPhone(currentMessage.FromPhone());
-            txtMsg.Body(questions.Query());
-
-            sys.puts(txtMsg.Body());
-            sys.puts(txtMsg.ToPhone());
-
-            return (txtMsg);
-        }
-
-        firstMessage = false;
 
         if (nextQuestion) {
             sys.log('Getting next message for nextQuestion');
