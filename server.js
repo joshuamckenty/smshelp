@@ -22,54 +22,53 @@ function sendTwimlSMSReply(httpResponse, number, body) {
 }
 
 // create our HTTP server which will listen for requests
-http.createServer(function(req, res) {
-    var request = url.parse(req.url, true);
-    sys.log(JSON.stringify(request.query));
-    var smsstring = request.query.Body;
-    var method = smsstring.split(" ")[0].toLowerCase();
-    switch (method) {
-        case 'm':
-        case 'med':
-        case 'medical':
-            method = "medical";
-            break;
-        case 'r':
-        case 'risk':
-            method = "risk";
-            break;
-        case 's':
-        case 'skills':
-            method = "skills";
-            break;
-        default:
-            method = "help";
-    }
-
-    session = client.get("session:" + request.query.From + ":method")
-    if (session) {
-        method = session;
-    } else if (method != 'help') {
-        client.set("session:" + request.query.From + ":method", method);
-        client.incr("totals:sessions:" + method);
-        client.incr("totals:sessions");
-    }
-    var message = new tm.TextMessage();
-    message.FromPhone(request.query.From).FromZip(request.query.FromZip);
-    message.FromCity(request.query.FromCity).FromCountry(request.query.FromCountry);
-    message.FromState(request.query.FromState).Body(request.query.Body);
-    sid = "session:" + request.query.From
-    message.Sid(sid)
-    payload = message.Serialize();
-    client.lpush(sid, payload);
-    if (method == 'help') {
-        sys.log('Sending instructions')
-        body = "Please send: (m)edical, (r)isk, (d)isaster, or (s)killz."
-        sendTwimlSMSReply(res, request.query.From, body)
-    } else {
-        channelName = method + "." + request.query.From;
-        sys.log('Sending to ' + channelName);
-        client.publish(channelName, payload);
-    }
-    // listen on the PORT defined in the environment or 4000 if not provided
+http.createServer(function (req, res) {
+	var request = url.parse(req.url, true);
+	sys.log(JSON.stringify(request.query));
+        var smsstring = request.query.Body;
+	var method = smsstring.split(" ")[0].toLowerCase();
+	switch(method) {
+                        case 'm':
+                        case 'med':
+                        case 'medical':
+                          method = "medical";
+                          break;
+                        case 'r':
+                        case 'risk':
+                          method = "risk";
+                          break;
+                        default:
+                          method = "help";
+        }
+        seskey = "session:" + request.query.From.toString() + ":method"
+        sys.log("Session Method Key is " + seskey)
+        client.get(seskey, function(err, sessmethod) {
+          sys.log("Fetch from redis says this session is doing: " + sessmethod)
+          if (sessmethod) {
+             method = sessmethod
+          } else if (method != 'help')  {
+            client.set("session:" + request.query.From.toString() + ":method", method);
+            client.incr("totals:sessions")
+            client.incr("totals:sessions:" + method);
+          }
+		var message = new tm.TextMessage();
+		message.FromPhone(request.query.From).FromZip(request.query.FromZip);
+		message.FromCity(request.query.FromCity).FromCountry(request.query.FromCountry);
+		message.FromState(request.query.FromState).Body(request.query.Body);
+		sid = "session:" + request.query.From
+		message.Sid(sid)
+		payload = message.Serialize(); 
+		client.lpush(sid, payload);
+		if (method == 'help') {
+		   sys.log('Sending instructions')
+		   body = "Please send: (m)edical, (r)isk, (d)isaster, or (s)killz." 
+		   sendTwimlSMSReply(res, request.query.From, body)
+		} else {
+		  channelName = method + "." + request.query.From;
+		  sys.log('Sending to ' + channelName);
+		  client.publish(channelName, payload);
+		}
+        });
+// listen on the PORT defined in the environment or 4000 if not provided
 }).listen(parseInt(PORT, 10));
 

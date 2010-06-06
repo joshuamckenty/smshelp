@@ -1,5 +1,7 @@
 
 
+var rdc = require("./redis-client");
+
 exports.TextMessageIO = RedisMessageIO; 
 
 
@@ -10,7 +12,8 @@ function RedisMessageIO(host, port, incomingChanel, newMessageHandler, outgoingC
     this.NewMessageHandler = newMessageHandler;
     
     var sys = require("sys");
-    var redisClient = require("./redis-client").createClient(port, host);
+    // var redisClient = require("./redis-client").createClient(port, host);
+    var redisClient = rdc.createClient();
     
     var tm = require("./TextMessage");
 
@@ -24,11 +27,10 @@ function RedisMessageIO(host, port, incomingChanel, newMessageHandler, outgoingC
     
     function sendMessage(txtMessage){
             
-        redisClient.publish(outgoingChanel, txtMessage.Serialize(), 
-			      function (err, reply) {
-			        sys.puts("Published message to " + 
-				  (reply === 0 ? "no one" : (reply + " subscriber(s).")));
-			    });
+        var sendRedisClient = rdc.createClient();
+        sys.log("publishing to " + outgoingChanel)
+        sys.log("publishing to host and port " + host +" " + port)
+        sendRedisClient.publish("outbound.foo", txtMessage.Serialize());
     }
 
     function handleMessage(channel, message, subscriptionPattern) {
