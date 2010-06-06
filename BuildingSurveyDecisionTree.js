@@ -44,7 +44,7 @@ exports.BuildingSurveyDecisionTree = function() {
     function loadMessages(messageArray) {
         sys.puts("message load");
         if (messageArray.length > 0) {
-            nextQuestion = questions.NextQuestion(messageArray[0].Body());
+            nextQuestion = questions.NextQuestion(messageArray[0]);
         } else {
             firstMessage = true;
             sys.puts("firstQuestion");
@@ -53,7 +53,7 @@ exports.BuildingSurveyDecisionTree = function() {
 
         for (var i = 1; i < messageArray.length; i++) {
             if (messageArray[i] && messageArray[i].Body && nextQuestion) {
-                nextQuestion = nextQuestion.NextQuestion(messageArray[i].Body());
+                nextQuestion = nextQuestion.NextQuestion(messageArray[i]);
             }
         }
         sys.puts("messagesLoaded");

@@ -16,7 +16,7 @@ exports.Question = function Question() {
     function addQ(key, q) { stateWrapper["_private"].nextQuestion[key] = q; }
     function getNextQuestion(tm) {
 
-        var next = nextQ("") | nextQ(tm.Body().toLower());
+        var next = nextQ("") | nextQ(tm.Body().toLowerCase());
 
         if (next) {
             return (next);
