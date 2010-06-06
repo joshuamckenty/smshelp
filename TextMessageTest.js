@@ -6,9 +6,10 @@
 	
 
 	function test(){
-		
-		var message = new tm.TextMessage();
-		
+
+	    var message = new tm.TextMessage(JSON.stringify({ "from": "2508844384", "fcity": "Marshall", "fstate": "AL", "fzip": "", "fcountry": "US", "to": "", "tcity": "", "tstate": "", "tzip": "", "tcountry": "", "body": "I like to help", "twilosmssid": "", "twiloacctid": "" }));
+
+	    sys.puts(message.FromPhone());
 		message.ToPhone("7038555608");
 		
 		sys.puts(message.ToPhone());

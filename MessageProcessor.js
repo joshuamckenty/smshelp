@@ -4,7 +4,7 @@ var host = "smshlp.org"
 var sys = require("sys");
 var redisClient = require("./redis-client").createClient(port, host);
 
-redisClient.subscribeTo("*", handleMessage);
+redisClient.subscribeTo("med.*", handleMessage);
 
 function handleMessage(channel, message, subscriptionPattern) {
     var output = "[" + channel;
@@ -12,4 +12,10 @@ function handleMessage(channel, message, subscriptionPattern) {
         output += " (from pattern '" + subscriptionPattern + "')";
     output += "]: " + message;
     sys.puts(output);
+    redisClient.close();
+}
+
+exports.MessageProcessor(){
+
+
 }
