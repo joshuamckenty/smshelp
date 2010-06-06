@@ -18,12 +18,8 @@ exports.DecisionTree = function(questArray) {
 
         var previous = questions;
         var next = null;
-
-        if (qStrings.length > 0) {
-            previous.Query(qStrings[0]);
-        }
-
-        for (var i = 1; i < qStrings.length; i++) {
+        
+        for (var i = 0; i < qStrings.length; i++) {
 
             next = new quest.Question();
             next.Query(qStrings[i]);
