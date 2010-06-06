@@ -3,9 +3,9 @@ exports.BuildingSurveyDecisionTree = function() {
 
     var that = this;
 
-    var tm = new (require("./TextMessage");
-    
-    var questions = new (require("./Question")).Question
+    var tm = require("./TextMessage");
+    var queslib = require("./Question");
+    var questions = new queslib.Question();
 
     var qStrings = ["What type of building is this? Reply with [H]ouse, [A]partment, [R]etail, [O]ffice, [W]arehouse, or [I]ndustrial.",
                     "How many stories does this building have? What is it made out of (eg, brick, wood, steel, etc.)?",

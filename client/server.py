@@ -18,7 +18,7 @@ class AnotherHandler(tornado.web.RequestHandler):
     def get(self, path):
         # items = ["Medical", "Risk", "Disaster", "Skills"]
         
-        self.render("templates/%s" % path, title="SMS About")
+        self.render("templates/%s.html" % path, title="SMS About")
 
 settings = {
     "static_path": os.path.join(os.path.dirname(__file__), 'static' ), 
@@ -26,7 +26,7 @@ settings = {
 
 application = tornado.web.Application([
   (r"/", MainHandler),
-  (r"/([^/]*)", AnotherHandler),
+  (r"/([^/]*)\.html", AnotherHandler),
 ], **settings) 
 
 if __name__ == "__main__":

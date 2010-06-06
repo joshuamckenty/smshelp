@@ -1,7 +1,7 @@
-exports.Question = function() {
+exports.Question = function Question() {
 
     var that = this;
-    var stateWrapper = { _private: { query: "", nextQuestion: {}};
+    var stateWrapper = { _private: { query: "", nextQuestion: {}}};
 
     function makeGetSet(obj, key) {
         return (function(value) {

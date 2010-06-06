@@ -60,6 +60,7 @@ http.createServer(function (req, res) {
 	   sendTwimlSMSReply(res, request.query.From, body)
         } else {
           channelName = method + "." + request.query.From;
+          sys.log('Sending to ' + channelName);
           client.publish(channelName, payload);
         }
         /*

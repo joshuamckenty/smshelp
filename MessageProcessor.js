@@ -2,7 +2,7 @@ var sys = require("sys");
 
 var smsHelpDAL = new (require("./SMSHelpDAL")).DAL();
 
-exports.MessageProcessor() = function(messageType, decisionTree) {
+exports.MessageProcessor = function(messageType, decisionTree) {
 
     var port = 6379;
     var host = "smshlp.org"
