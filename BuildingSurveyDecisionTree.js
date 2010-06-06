@@ -9,6 +9,7 @@ exports.BuildingSurveyDecisionTree = function() {
 
     var questions = new quest.Question;
 
+
     var qStrings = ["What type of building is this? Reply with [H]ouse, [A]partment, [R]etail, [O]ffice, [W]arehouse, or [I]ndustrial.",
                     "How many stories does this building have? What is it made out of (eg, brick, wood, steel, etc.)?",
                     "Where is this building?  Reply with the address if possible, otherwise reply with the postcode or light-post number.",

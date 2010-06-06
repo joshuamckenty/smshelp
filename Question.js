@@ -1,4 +1,4 @@
-exports.Question = function() {
+exports.Question = function Question() {
 
     var that = this;
     var stateWrapper = { _private: { query: "", nextQuestion: {}} };
@@ -35,4 +35,3 @@ exports.Question = function() {
     this.AddNextQuestion = addQuestion;
 
 };
-

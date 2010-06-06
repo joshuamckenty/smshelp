@@ -1,0 +1,23 @@
+{% extends base.html %}
+
+{% block body %}
+    
+    <div id="summary">
+       <div class="container">
+         {% for item in items %}
+         <div id="app_summary">
+           <h2>{{ escape(item['title']) }}</h2>
+           <div class="num">{{ escape(item['convo']) }}</div><div class="title">texts</div>
+           <div class="num">{{ escape(item['users']) }}</div><div class="title">people</div>
+           <!-- ><div class="num">{{ escape(item['users']) }}</div><div class="title">completed</div>
+           <div class="num">{{ escape(item['users']) }}</div><div class="title">countries</div> -->
+         </div>
+         {% end %}
+      </div>
+    </div>
+ 
+    <div id="content" class="container">
+       <div id="map_canvas"></div>    
+    </div>
+    
+{% end %}
