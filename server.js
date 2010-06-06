@@ -49,6 +49,7 @@ http.createServer(function (req, res) {
           } else if (method != 'help')  {
             client.set("session:" + request.query.From.toString() + ":method", method);
             client.incr("totals:sessions")
+            client.incr("totals:sessions:" + method);
           }
 		var message = new tm.TextMessage();
 		message.FromPhone(request.query.From).FromZip(request.query.FromZip);
