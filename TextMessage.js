@@ -3,7 +3,7 @@ var sys = require("sys");
 exports.TextMessage = function(jsonState) {
 
     var that = this;
-    var stateWrapper = { _private: { from: "", fcity: "", fstate: "", fzip: "", fcountry: "",
+    var stateWrapper = { _private: { sid: "", from: "", fcity: "", fstate: "", fzip: "", fcountry: "",
         to: "", tcity: "", tstate: "", tzip: "", tcountry: "",
         body: "",
         twilosmssid: "",
@@ -19,7 +19,7 @@ exports.TextMessage = function(jsonState) {
 
         });
     }
-
+    this.Sid = makeGetSet(stateWrapper, "sid");
     this.FromPhone = makeGetSet(stateWrapper, "from");
     this.FromCity = makeGetSet(stateWrapper, "fcity");
     this.FromState = makeGetSet(stateWrapper, "fstate");
@@ -39,11 +39,11 @@ exports.TextMessage = function(jsonState) {
 
     this.Serialize = function() { return (JSON.stringify(stateWrapper["_private"])); };
     this.Deserialize = function(json) {
-    try {
+        try {
             stateWrapper["_private"] = JSON.parse(json.toString())
         } catch (e) { sys.puts(e); return (null); }
     };
-    
+
     if (jsonState) {
         that.Deserialize(jsonState);
     }
