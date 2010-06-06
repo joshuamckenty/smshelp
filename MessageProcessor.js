@@ -12,6 +12,7 @@ exports.MessageProcessor = function(messageType, decisionTree) {
     function messageHandler(tm) {
 
         sys.puts("Message Recieved: From: " + tm.FromPhone() + " Message: " + tm.Body());
+        sys.puts("Session ID is " + tm.Sid());
 
         decisionTree.LoadMessages(smsHelpDAL.GetSessionMessages("")); //tm.Sid()));
 

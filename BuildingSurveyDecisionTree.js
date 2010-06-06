@@ -63,6 +63,7 @@ exports.BuildingSurveyDecisionTree = function() {
         sys.puts("next message");
         var txtMsg = new tm.TextMessage();
         var nextQ;
+
         sys.puts("firstmsg:" + firstMessage + " questions: " + questions);
         if (firstMessage && questions) {
 
@@ -73,11 +74,12 @@ exports.BuildingSurveyDecisionTree = function() {
             sys.puts(txtMsg.ToPhone());
 
             return (txtMsg);
-        }
+		}
 
         firstMessage = false;
 
         if (nextQuestion) {
+            sys.log('Getting next message for nextQuestion');
             nextQ = nextQuestion.NextQuestion(currentMessage);
         } else {
             return (null);
@@ -89,6 +91,7 @@ exports.BuildingSurveyDecisionTree = function() {
         } else {
             return (null);
         }
+        return txtMsg;
     }
 
     this.LoadMessages = loadMessages;
