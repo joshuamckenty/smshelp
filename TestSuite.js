@@ -1,5 +1,6 @@
 var sys = require('sys');
 var qresp = new (require("./TestQuestionResponse")).TestQuestionResponse;
+var build = new (require("./TestDecisionTreeSurvey")).TestDecisionTreeSurvey;
 
 function main() {
 
@@ -8,6 +9,12 @@ function main() {
     qresp.RunTests();
 
     sys.puts("\n-- END ---- Question Response Tests ---------------------------------\n");
+
+    sys.puts("\n-- START -- Decision Tree Survey Tests ---------------------------------\n");
+
+    build.RunTests();
+
+    sys.puts("\n-- END ---- Decision Tree Survey Tests ---------------------------------\n");
 }
 
 

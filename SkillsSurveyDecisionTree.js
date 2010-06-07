@@ -9,6 +9,10 @@ exports.SkillsSurveyDecisionTree = function() {
              "What are your weekly hours of availability to respond to text messages: [Mon:hh:mm-hh:mm, Sun:hh:mm-hh:mm]",
              "Thank you for registering with TXTHLP.org -- help you need by SMS --"];
 
+      var survey = new dt.DecisionTree();
+      var questionTree = survey.MakeQuestionSurveyTreeFromStrings(qStrings);
 
-    return(new dt.DecisionTree(qStrings));
+      survey.QuestionTreeRoot(questionTree);
+
+      return (survey);
 };

@@ -11,7 +11,10 @@ exports.MedicalSurveyDecisionTree = function() {
          "Doctor: Advice/likely Diagnosis: Terbuculosis. Treatment: antibiotics for 10 days. Drink plenty of water.",
          "Thank you for using TXTHLP.org -- help you need by SMS --"];
 
+    var survey = new dt.DecisionTree();
+    var questionTree = survey.MakeQuestionSurveyTreeFromStrings(qStrings);
 
+    survey.QuestionTreeRoot(questionTree);
 
-    return(new dt.DecisionTree(qStrings));
+    return (survey);
 };

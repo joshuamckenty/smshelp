@@ -1,9 +1,9 @@
 var sys = require('sys');
 
-exports.Question = function Question() {
+exports.Question = function Question(questionString, possibleResponses) {
 
     var that = this;
-    var stateWrapper = { _private: { query: "", nextQuestion: {}} };
+    var stateWrapper = { _private: { query: (questionString ? questionString : ""), responses: (possibleResponses ? possibleResponses : [])} };
 
     function makeGetSet(obj, key) {
         return (function(value) {
@@ -14,28 +14,25 @@ exports.Question = function Question() {
         });
     }
 
-    function nextQ(key) { return (stateWrapper["_private"].nextQuestion[key]); }
-    function addQ(key, q) { stateWrapper["_private"].nextQuestion[key] = q; }
-    function getNextQuestion(tm) {
-       sys.log("Getting question for response of " + tm.Body())
+    function getNextQuestion(responseString) {
 
-        // var next = nextQ("a") || nextQ(tm.Body().toLowerCase());
-        return nextQ("a")
-        if (next) {
-            return (next);
-        } else {
-            return (null);
+        var myChildren = that.Responses();
+
+        for (var i = 0; i < myChildren.length; i++) {
+
+            if (myChildren[i] && myChildren[i].Matches) {
+
+                if (myChildren[i].Matches(responseString)) {
+
+                    return (myChildren[i].NextQuestion());
+                }
+            }
         }
-    }
 
-    function addQuestion(resp, question) {
-        sys.log("Adding response for 'resp'" + resp);
-        addQ(resp, question);
+        return (null);
     }
-
 
     this.Query = makeGetSet(stateWrapper, "query");
     this.NextQuestion = getNextQuestion;
-    this.AddNextQuestion = addQuestion;
-
+    this.Responses = makeGetSet(stateWrapper, "responses");
 };

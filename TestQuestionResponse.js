@@ -1,7 +1,7 @@
 var sys = require('sys');
 var resp = require("./QuestionResponse");
 
-exports.TestQuestionResponse = function(regex) {
+exports.TestQuestionResponse = function() {
 
     var that = this;
 
@@ -9,7 +9,7 @@ exports.TestQuestionResponse = function(regex) {
 
         var r = new resp.QuestionResponse();
 
-        r.RegEx("a|A");
+        r.RegEx(".*");
 
         sys.puts("Regex: " + r.RegEx());
         

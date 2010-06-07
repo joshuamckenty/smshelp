@@ -1,9 +1,9 @@
 var sys = require('sys');
 
-exports.QuestionResponse = function(regex) {
+exports.QuestionResponse = function(regex, nextQuest) {
 
     var that = this;
-    var stateWrapper = { _private: { responseRegEx: ""} };
+    var stateWrapper = { _private: { responseRegEx: regex ? regex : null, nextQuestion: (nextQuest ? nextQuest : null)} };
 
     function makeGetSet(obj, key) {
         return (function(value) {
@@ -21,5 +21,6 @@ exports.QuestionResponse = function(regex) {
     }
 
     this.RegEx = makeGetSet(stateWrapper, "responseRegEx");
+    this.NextQuestion = makeGetSet(stateWrapper, "nextQuestion");
     this.Matches = matchResponse;
 };

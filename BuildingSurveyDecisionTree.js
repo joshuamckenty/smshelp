@@ -10,6 +10,11 @@ exports.BuildingSurveyDecisionTree = function() {
                     "What is the average occupancy in this building? What is its primary use? Reply living, restaurant, office, shop, hotel, multiple",
                     "Thank you for using TXTHLP.org -- help you need by SMS --. Your mobile account will be credited shortly. More credits available for doing other buildings in your area."];
 
-    return (new dt.DecisionTree(qStrings));
+    var survey= new dt.DecisionTree();
+    var questionTree = survey.MakeQuestionSurveyTreeFromStrings(qStrings);
+    
+    survey.QuestionTreeRoot(questionTree);
+    
+    return (survey);
 };
 
