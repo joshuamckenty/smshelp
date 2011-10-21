@@ -7,9 +7,9 @@ var chat = function() {
 	var clientId = Math.random();
 	var latestId = -1;
 	var seenIds = [];
-	
+
 	var ip2Color = {};
-	
+
 	var colors = [
 		'red',
 		'green',
@@ -23,13 +23,13 @@ var chat = function() {
 		'#b284d0',
 		'#8a1e9c'
 	];
-	
+
 	function debugMessage(message) {
 		var markup = "<div>" + message + "</div>";
 		debugRef.innerHTML += markup;
 		debugRef.scrollTop = debugRef.scrollHeight;
 	}
-	
+
 	function init() {
 		submitRef = document.getElementById("sendBtn");
 		entryRef = document.getElementById("entry");
@@ -37,22 +37,22 @@ var chat = function() {
 		debugRef = document.getElementById("debug");
 		debugMessage("Initialized!");
 	}
-	
+
 	function sendHandler() {
 		var message = entryRef.value;
-		
+
 		debugMessage("Sending message");
-		
+
 		submitRef.value = "Send...";
 		submitRef.disabled = true;
 		entryRef.disabled = true;
-		
+
 		var node = document.createElement("script");
 		node.src = "/api/send/?clientId=" + clientId + "&content=" + message + "&rand=" + Math.random();
 		document.body.appendChild(node);
 		debugMessage("Script node appended");
 	}
-	
+
 	function bindHandlers() {
 		debugMessage("Binding handlers");
 		submitRef.onclick = sendHandler;
@@ -62,14 +62,14 @@ var chat = function() {
 			}
 		};
 	}
-	
+
 	function getColor(ip) {
 		if(!ip2Color[ip]) {
 			ip2Color[ip] = colors.pop();
 		}
 		return ip2Color[ip];
 	}
-	
+
 	function processMessages(jsonString) {
 		debugMessage("Processing messages");
 		var messages = json_parse(jsonString).response;
@@ -86,11 +86,11 @@ var chat = function() {
 		chatRef.scrollTop = chatRef.scrollHeight;
 		debugMessage("Finished processing messages");
 	}
-	
+
 	function handleXHRResponse() {
 		if(this.readyState != 4) { return; }
 		if(this.status == 200) {
-			debugMessage("Got 200 response"); 
+			debugMessage("Got 200 response");
 			processMessages(this.responseText);
 			startPuller();
 		} else {
@@ -98,15 +98,15 @@ var chat = function() {
 			startPuller();
 		}
 	}
-	
+
 	function startPuller() {
-		debugMessage("Starting new XHR"); 
+		debugMessage("Starting new XHR");
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = handleXHRResponse;
 		xhr.open("GET", "/api/poll/" + latestId, true);
 		xhr.send();
 	}
-	
+
 	return {
 		start: function() {
 			init();
@@ -115,10 +115,10 @@ var chat = function() {
 		},
 		receiveSendResponse: function(response) {
 			if(response.status == 200) {
-				debugMessage("Message sent successfully"); 
+				debugMessage("Message sent successfully");
 				entryRef.value = "";
 			} else {
-				debugMessage("Message sending failed"); 
+				debugMessage("Message sending failed");
 			}
 			entryRef.disabled = false;
 			submitRef.value = "Send";

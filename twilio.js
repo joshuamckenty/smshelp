@@ -1,7 +1,7 @@
 var sys    = require('sys'),
     http   = require('http'),
     httpcli   = require('./httpclient'),
-    base64 = require('./vendor/base64'); 
+    base64 = require('./vendor/base64');
 
 // exports.send_sms = function() {
 	TWILIO_API_URL = 'api.twilio.com'

@@ -1,6 +1,6 @@
 
 var dt = require("./DecisionTree");
-    
+
 exports.SkillsSurveyDecisionTree = function() {
 
       var qStrings = ["Tell us about nature of skills your offering: [M]edical, [R]isk, [D]isaster, [L]abour/manual work, [T]echnical/IT",

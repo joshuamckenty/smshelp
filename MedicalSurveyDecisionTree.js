@@ -1,6 +1,6 @@
 
 var dt = require("./DecisionTree");
-    
+
 exports.MedicalSurveyDecisionTree = function() {
 
     var qStrings = ["Tell us about patient: Age[#], Sex [M/F], Weight [kg], height [cm], Location [Town, zip/postal code], Kenya [(Y)es or (N)o]",

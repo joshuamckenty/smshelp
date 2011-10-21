@@ -3,7 +3,7 @@
 //
 // $ kiwi install redis-client
 
-var sys = require("sys"), 
+var sys = require("sys"),
     kiwi = require("kiwi"),
     client = kiwi.require("redis-client").createClient();
 

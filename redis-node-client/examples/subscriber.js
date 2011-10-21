@@ -3,13 +3,13 @@
 // This script plays the role of listener/subscriber/consumer
 // to **all** channels/classes.
 
-var 
+var
   sys = require("sys"),
   client = require("../lib/redis-client").createClient();
 
 sys.puts("waiting for messages...");
 
-client.subscribeTo("*", 
+client.subscribeTo("*",
   function (channel, message, subscriptionPattern) {
     var output = "[" + channel;
     if (subscriptionPattern)

@@ -6,12 +6,12 @@ var http = require('http'),
 	tm = require('./TextMessage'),
 	events = require('events'),
         client = require("./redis-client").createClient();
-	
+
 // setup some local variables we need
 var PORT = process.env.PORT || 4000,
 	notifier = new events.EventEmitter(),
 	dataStore = [];
-	
+
 sys.log('Starting HTTP server on port ' + PORT);
 
 // client.set("totals:sessions", "0")
@@ -57,11 +57,11 @@ http.createServer(function (req, res) {
 		message.FromState(request.query.FromState).Body(request.query.Body);
 		sid = "session:" + request.query.From
 		message.Sid(sid)
-		payload = message.Serialize(); 
+		payload = message.Serialize();
 		client.lpush(sid, payload);
 		if (method == 'help') {
 		   sys.log('Sending instructions')
-		   body = "Please send: (m)edical, (r)isk, (d)isaster, or (s)killz." 
+		   body = "Please send: (m)edical, (r)isk, (d)isaster, or (s)killz."
 		   sendTwimlSMSReply(res, request.query.From, body)
 		} else {
 		  channelName = method + "." + request.query.From;

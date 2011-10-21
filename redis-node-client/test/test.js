@@ -28,12 +28,12 @@
 // http://github.com/fictorial/redis-node-client
 // Brian Hammond <brian at fictorial dot com>
 
-// NOTE: this test suite uses databases 14 and 15 for test purposes! 
+// NOTE: this test suite uses databases 14 and 15 for test purposes!
 // Make sure your Redis instance has at least this many databases; the default has 16.
-// These databases will be flushed these databases at the start of each test run. 
+// These databases will be flushed these databases at the start of each test run.
 // If you want to use a different database number, update TEST_DB_NUMBER* below.
 
-// NOTE: each test is responsible for configuring the dataset needed to 
+// NOTE: each test is responsible for configuring the dataset needed to
 // run that test.  There are no "fixtures" or similar.
 
 var TEST_DB_NUMBER = 15,
@@ -52,7 +52,7 @@ redisclient.debugMode = verbose && !quiet;
 
 function log(level, msg) {
     var colorsForLevel = { info:37, warn:33, error:31 };
-    sys.error("\033[" + colorsForLevel[level || 'info'] + "m[" + 
+    sys.error("\033[" + colorsForLevel[level || 'info'] + "m[" +
               level.toUpperCase() + "] " + msg + "\033[0m");
 }
 
@@ -107,10 +107,10 @@ function expectOK(context) {
 function maybeAsNumber(str) {
     var value = parseInt(str, 10);
 
-    if (isNaN(value)) 
+    if (isNaN(value))
         value = parseFloat(str);
 
-    if (isNaN(value)) 
+    if (isNaN(value))
         return str;
 
     return value;
@@ -139,7 +139,7 @@ function bufferFromString(str, encoding) {
         case 'utf8':   buf.utf8Write(str);   break;
         case 'ascii':  buf.asciiWrite(str);  break;
         case 'binary': buf.binaryWrite(str); break;
-        default: 
+        default:
             assert.fail("unknown encoding: " + encoding);
     }
     return buf;
@@ -236,7 +236,7 @@ function testParseMultiBulkReply() {
 function testParseInlineReply() {
     var a = new redisclient.ReplyParser(function (reply) {
         // maybeConvertReplyValue is called by redisclient for non-test calls
-        reply.value = redisclient.maybeConvertReplyValue_('N/A', reply);  
+        reply.value = redisclient.maybeConvertReplyValue_('N/A', reply);
         checkEqual(reply.type, redisclient.INLINE, "testParseInlineReply a-0");
         checkEqual(typeof(reply.value), 'boolean', "testParseInlineReply a-1");
         checkEqual(reply.value, true, "testParseInlineReply a-2");
@@ -811,7 +811,7 @@ function testSDIFFSTORE() {
     client.sadd('baz', 'a', expectNumber(1, "testSDIFFSTORE"))
     client.sadd('baz', 'd', expectNumber(1, "testSDIFFSTORE"))
 
-    // NB: SDIFFSTORE returns the number of elements in the dstkey 
+    // NB: SDIFFSTORE returns the number of elements in the dstkey
 
     client.sdiffstore('quux', 'foo', 'bar', 'baz', expectNumber(2, "testSDIFFSTORE"))
 
@@ -1027,7 +1027,7 @@ function testMOVE() {
 // Thus, sorting x 'by w*' results in [ 3, 9, 4, 2 ]
 //
 // Once sorted redis can fetch entries at the keys indicated by the 'get'
-// pattern. If we specify 'get o*', redis would fetch [ o3, o9, o4, o2 ] 
+// pattern. If we specify 'get o*', redis would fetch [ o3, o9, o4, o2 ]
 // since our sorted list was [ 3, 9, 4, 2 ].
 //
 // $ redis-cli mget o2 o3 o4 o9
@@ -1306,7 +1306,7 @@ function testZRANGEBYSCORE() {
     });
 }
 
-// zcount is undocumented as of Thu Apr 01 20:17:58 EDT 2010 
+// zcount is undocumented as of Thu Apr 01 20:17:58 EDT 2010
 // zcount key startScore endScore => number of elements in [startScore, endScore]
 
 function testZCOUNT() {
@@ -1554,13 +1554,13 @@ function testSUBSCRIBEandPUBLISH() {
     showTestBanner("testSUBSCRIBEandPUBLISH");
 
     var messagePayload = "I'm a lumberjack!";
-    var channelName = "Monty";     
+    var channelName = "Monty";
 
     client.subscribeTo(channelName, function (channel, message) {
         checkEqual(channel, channelName, "testSUBSCRIBEandPUBLISH a0");
         checkEqual(message, messagePayload, "testSUBSCRIBEandPUBLISH a1");
         messageWasReceived = true;
-    }); 
+    });
 
     // Create a 2nd client that publishes a message.
 
@@ -1657,7 +1657,7 @@ var allTestFunctions = [
     testFLUSHDB,
     testGET,
     testGETSET,
-    testHDEL, 
+    testHDEL,
     testHEXISTS,
     testHGET,
     testHGETALL,
@@ -1816,8 +1816,8 @@ function testStoreAnImage(callback) {
 
         client.get('png_image', function (err, value) {
             if (err) assert.fail(err, "testStoreAnImage (large; 3)");
-            checkEqual(value.binarySlice(0, value.length), 
-                       imageBuffer.binarySlice(0, imageBuffer.length), 
+            checkEqual(value.binarySlice(0, value.length),
+                       imageBuffer.binarySlice(0, imageBuffer.length),
                        "testStoreAnImage (large; 4)");
             redisclient.debugMode = wasDebugMode;
             testEXPIRE();
@@ -1828,7 +1828,7 @@ function testStoreAnImage(callback) {
 function checkIfDone() {
     if (client.originalCommands.length == 0) {
         testLargeGetSet();
-        
+
         var checks = 0;
         setInterval(function () {
             if (messageWasReceived) {
@@ -1838,7 +1838,7 @@ function checkIfDone() {
                 process.exit(0);
             } else {
                 assert.notEqual(++checks, 30, "testSUBSCRIBEandPUBLISH never received message");
-            } 
+            }
         }, 1000);
     } else {
         if (verbose)
@@ -1869,10 +1869,10 @@ function runAllTests() {
     setTimeout(checkIfDone, 1500);
 }
 
-// Do not reconnect in tests to keep things simple. 
+// Do not reconnect in tests to keep things simple.
 // Redis must stay up during the tests.
 
-var client = redisclient.createClient(redisclient.DEFAULT_PORT, redisclient.DEFAULT_HOST, 
+var client = redisclient.createClient(redisclient.DEFAULT_PORT, redisclient.DEFAULT_HOST,
     { maxReconnectionAttempts: 0 });
 client.addListener("connected", runAllTests);
 client.addListener("noconnection", function () {
@@ -1891,6 +1891,6 @@ function debugFilter(what) {
 }
 
 function printDisclaimer() {
-    if (redisclient.debugMode) 
+    if (redisclient.debugMode)
         sys.debug("This test does not do anything");
 }

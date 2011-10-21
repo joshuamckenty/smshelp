@@ -19,7 +19,7 @@ In one terminal:
 
 In another terminal:
 
-    $ ./subscriber.js 
+    $ ./subscriber.js
     waiting for messages...
     [channel-6702921148389578]: The time is Fri Apr 02 2010 16:52:19 GMT-0400 (EDT)
     [channel-9212789069861174]: The time is Fri Apr 02 2010 16:52:20 GMT-0400 (EDT)
