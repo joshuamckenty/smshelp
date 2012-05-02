@@ -29,7 +29,7 @@
 // submitted commands will never come.  Fine, replay the commands that didn't
 // get a reply, right?  No. Redis might have started processing some of the
 // commands...  See http://gist.github.com/372038 for example.  OK, so what
-// does the client do?  
+// does the client do?
 //
 // The client calls the callback of each originally submitted command's
 // callback with an `err` arg equal to `COMMAND_ORPHANED_ERROR` and
@@ -42,22 +42,22 @@
 //  [TODO] MULTI/EXEC is unsupported in the client at the moment. What if a MULTI
 //         is orphaned but the EXEC is queued?  Eek.
 
-var 
+var
   sys = require('sys'),
   redis = require('../lib/redis-client');
 
 // sys.debug() is synchronous; you can probably kill Redis will waiting for the
 // output to scroll by.
 
-redis.debugMode = false;        
+redis.debugMode = false;
 
 client = redis.createClient();
 
-var 
-  remainingCallbacks = 0, 
+var
+  remainingCallbacks = 0,
   orphanedCommands = 0;
 
-// We do not have to, but let the client stream establish 
+// We do not have to, but let the client stream establish
 // a connection to Redis before sending commands.
 
 var randomKey = (Math.random() * Math.random()).toString();
@@ -70,7 +70,7 @@ function submitCommands() {
 
   for (; i<50000; ++i) {
     client.incr(randomKey, function (err, newValue) {
-      if (err && err.message == redis.COMMAND_ORPHANED_ERROR) 
+      if (err && err.message == redis.COMMAND_ORPHANED_ERROR)
         ++orphanedCommands;
       --remainingCallbacks;
     });
@@ -92,7 +92,7 @@ client.addListener("reconnected", function () {
 setInterval(function () {
   // If there was no initial connection or the client gave up retrying, quit.
 
-  if (client.noConnection) 
+  if (client.noConnection)
     process.exit(1);
 
   sys.puts("waiting for " + remainingCallbacks + " callbacks.");
@@ -114,7 +114,7 @@ setInterval(function () {
 
       // Clean up
 
-      client.del(randomKey, function () { 
+      client.del(randomKey, function () {
         process.exit(0);
       });
     });

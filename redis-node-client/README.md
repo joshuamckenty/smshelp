@@ -2,11 +2,11 @@
 
 ## In a nutshell
 
-- Talk to Redis from Node.js 
+- Talk to Redis from Node.js
 - Fully asynchronous; your code is called back when an operation completes
 - [Binary-safe](http://github.com/fictorial/redis-node-client/blob/master/test/test.js#L353-363); uses Node.js Buffer objects for request serialization and reply parsing
     - e.g. store a PNG in Redis if you'd like
-- Client API directly follows Redis' [command specification](http://code.google.com/p/redis/wiki/CommandReference) 
+- Client API directly follows Redis' [command specification](http://code.google.com/p/redis/wiki/CommandReference)
 - *You have to understand how Redis works and the semantics of its command set to most effectively use this client*
 - Supports Redis' new exciting [PUBSUB](http://code.google.com/p/redis/wiki/PublishSubscribe) commands
 - Automatically reconnects to Redis (doesn't drop commands sent while waiting to reconnect either) using [exponential backoff](http://en.wikipedia.org/wiki/Exponential_backoff)
@@ -28,7 +28,7 @@ When working with a Kiwi-based installation:
 
     // $ kiwi install redis-client
 
-    var sys = require("sys"), 
+    var sys = require("sys"),
         kiwi = require("kiwi"),
         client = kiwi.require("redis-client").createClient();
 
@@ -89,7 +89,7 @@ the callback function is called.
         // ...
     });
 
-This can get [a little wacky](http://github.com/fictorial/redis-node-client/blob/master/test/test.js#L1093-1097). 
+This can get [a little wacky](http://github.com/fictorial/redis-node-client/blob/master/test/test.js#L1093-1097).
 I'm open to suggestions for improvement here.
 
 Note: for PUBSUB, you should use `subscribeTo` and `unsubscribeFrom` instead of the generated

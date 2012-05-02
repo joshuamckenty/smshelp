@@ -17,17 +17,17 @@ class MainHandler(tornado.web.RequestHandler):
 class AnotherHandler(tornado.web.RequestHandler):
     def get(self, path):
         # items = ["Medical", "Risk", "Disaster", "Skills"]
-        
+
         self.render("templates/%s.html" % path, title="SMS About")
 
 settings = {
-    "static_path": os.path.join(os.path.dirname(__file__), 'static' ), 
+    "static_path": os.path.join(os.path.dirname(__file__), 'static' ),
 }
 
 application = tornado.web.Application([
   (r"/", MainHandler),
   (r"/([^/]*)\.html", AnotherHandler),
-], **settings) 
+], **settings)
 
 if __name__ == "__main__":
     http_server = tornado.httpserver.HTTPServer(application)

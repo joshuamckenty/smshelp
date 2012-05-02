@@ -9,7 +9,7 @@ var sys = require('sys'),
     redis = require('../lib/redis-client');
 
 redis.debugMode = true;
-    
+
 var client = redis.createClient();
 
 client.addListener('connected', function () {

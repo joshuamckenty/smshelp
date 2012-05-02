@@ -29,7 +29,7 @@ exports.streamFile = function (filepath, headerFields, stat, res, req, emitter) 
 
     etag = '"' + stat.ino + '-' + stat.size + '-' + Date.parse(stat.mtime) +'"';
     headerFields['ETag'] = etag;
-     
+
     var statCode;
     //Check to see if we can send a 304 and skip the send
     if(req.headers['if-none-match'] == etag){
@@ -44,16 +44,16 @@ exports.streamFile = function (filepath, headerFields, stat, res, req, emitter) 
         headerFields['Expires'] = expires.toUTCString();
       }
     }
-    
+
     res.writeHead(statCode, headerFields);
-    
+
     //If we sent a 304, skip sending a body
     if (statCode == 304) {
       res.close();
       emitter.emit("success", statCode);
     }
     else {
-      fs.createReadStream(filepath,{'flags': 'r', 'encoding': 
+      fs.createReadStream(filepath,{'flags': 'r', 'encoding':
                                     'binary', 'mode': 0666, 'bufferSize': 4 * 1024})
         .addListener("data", function(chunk){
           res.write(chunk, 'binary');
@@ -106,14 +106,14 @@ exports.deliver = function (webroot, req, res) {
         return delegate;
       }
     };
-    
+
   process.nextTick(function() {
     //If file is in a directory outside of the webroot, deny the request
     if (fpErr) {
       statCode = 403;
       if (beforeCallback)
         beforeCallback();
-      if (errorCallback) 
+      if (errorCallback)
         errorCallback(403, 'Forbidden');
     }
     else {
@@ -132,10 +132,10 @@ exports.deliver = function (webroot, req, res) {
           }
           else {
             stream = exports.streamFile(filepath, headerFields, stat, res, req)
-           
+
             if(afterCallback){
               stream.addListener("success", afterCallback);
-            } 
+            }
             if(errorCallback){
               stream.addListener("error", errorCallback);
             }
@@ -144,7 +144,7 @@ exports.deliver = function (webroot, req, res) {
       });
     }
   });
-  
+
   return delegate;
 };
 

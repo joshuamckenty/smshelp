@@ -45,13 +45,13 @@ var net = require("net"),
     COLON     = exports.COLON     = 0x3A, // :
     CR        = exports.CR        = 0x0D, // \r
     LF        = exports.LF        = 0x0A, // \n
-                                
+
     NONE      = exports.NONE      = "NONE",
-    BULK      = exports.BULK      = "BULK",     
+    BULK      = exports.BULK      = "BULK",
     MULTIBULK = exports.MULTIBULK = "MULTIBULK",
-    INLINE    = exports.INLINE    = "INLINE",   
-    INTEGER   = exports.INTEGER   = "INTEGER",  
-    ERROR     = exports.ERROR     = "ERROR";    
+    INLINE    = exports.INLINE    = "INLINE",
+    INTEGER   = exports.INTEGER   = "INTEGER",
+    ERROR     = exports.ERROR     = "ERROR";
 
 exports.DEFAULT_HOST = '127.0.0.1';
 exports.DEFAULT_PORT = 6379;
@@ -60,7 +60,7 @@ exports.COMMAND_ORPHANED_ERROR = "connection lost before reply received";
 exports.NO_CONNECTION_ERROR = "failed to establish a connection to Redis";
 
 function debugFilter(buffer, len) {
-    // Redis is binary-safe but assume for debug display that 
+    // Redis is binary-safe but assume for debug display that
     // the encoding of textual data is UTF-8.
 
     var filtered = buffer.utf8Slice(0, len || buffer.length);
@@ -94,7 +94,7 @@ ReplyParser.prototype.clearState = function () {
 };
 
 ReplyParser.prototype.clearMultiBulkState = function () {
-    this.multibulkReplies = null; 
+    this.multibulkReplies = null;
     this.multibulkRepliesExpected = null;
 };
 
@@ -117,7 +117,7 @@ ReplyParser.prototype.feed = function (inbound) {
             }
         }
 
-        // Just a state transition on '*', '+', etc.?  
+        // Just a state transition on '*', '+', etc.?
 
         if (typeBefore != this.type)
             continue;
@@ -133,9 +133,9 @@ ReplyParser.prototype.feed = function (inbound) {
             if (self.multibulkReplies != null) {
                 self.multibulkReplies.push(reply);
                 if (--self.multibulkRepliesExpected == 0) {
-                    self.onReply.call(self.thisArg, { 
-                        type:  MULTIBULK, 
-                        value: self.multibulkReplies 
+                    self.onReply.call(self.thisArg, {
+                        type:  MULTIBULK,
+                        value: self.multibulkReplies
                     });
                     self.clearMultiBulkState();
                 }
@@ -151,7 +151,7 @@ ReplyParser.prototype.feed = function (inbound) {
             switch (this.type) {
                 case INLINE:
                 case ERROR:
-                    // CR denotes end of the inline/error value.  
+                    // CR denotes end of the inline/error value.
                     // +OK\r\n
                     //    ^
 
@@ -161,7 +161,7 @@ ReplyParser.prototype.feed = function (inbound) {
                     break;
 
                 case INTEGER:
-                    // CR denotes the end of the integer value.  
+                    // CR denotes the end of the integer value.
                     // :42\r\n
                     //    ^
 
@@ -176,7 +176,7 @@ ReplyParser.prototype.feed = function (inbound) {
                         // $5\r\nhello\r\n
                         //   ^
 
-                        var bulkLengthExpected = 
+                        var bulkLengthExpected =
                             parseInt(this.valueBuffer.asciiSlice(0, this.valueBufferLen), 10);
 
                         if (bulkLengthExpected <= 0) {
@@ -201,7 +201,7 @@ ReplyParser.prototype.feed = function (inbound) {
                         // with the reply specification.
                         // $11\r\nhello\rworld\r\n
                         //             ^
-                        
+
                         this.valueBuffer[this.valueBufferLen++] = inbound[i];
                     }
                     break;
@@ -212,7 +212,7 @@ ReplyParser.prototype.feed = function (inbound) {
                     // *2\r\n$5\r\nhello\r\n$5\r\nworld\r\n
                     //   ^
 
-                    var multibulkRepliesExpected = 
+                    var multibulkRepliesExpected =
                         parseInt(this.valueBuffer.asciiSlice(0, this.valueBufferLen), 10);
 
                     if (multibulkRepliesExpected <= 0) {
@@ -234,7 +234,7 @@ ReplyParser.prototype.feed = function (inbound) {
 
         // If the current value buffer is too big, create a new buffer, copy in
         // the old buffer, and replace the old buffer with the new buffer.
- 
+
         if (this.valueBufferLen === this.valueBuffer.length) {
             var newBuffer = new Buffer(this.valueBuffer.length * 2);
             this.valueBuffer.copy(newBuffer, 0, 0);
@@ -252,7 +252,7 @@ ReplyParser.prototype.feed = function (inbound) {
  * - 'noconnection' when a connection (or reconnection) cannot be established.
  * - 'drained' when no submitted commands are expecting a reply from Redis.
  *
- * Options: 
+ * Options:
  *
  * - maxReconnectionAttempts (default: 10)
  */
@@ -273,7 +273,7 @@ function Client(stream, options) {
     this.reconnectionDelay = 500;    // doubles, so starts at 1s delay
     this.connectionsMade = 0;
 
-    if (options !== undefined) 
+    if (options !== undefined)
         this.maxReconnectionAttempts = Math.abs(options.maxReconnectionAttempts || 10);
 
     var client = this;
@@ -292,8 +292,8 @@ function Client(stream, options) {
             client.reconnectionTimer = null;
         }
 
-        var eventName = client.connectionsMade == 0 
-                      ? 'connected' 
+        var eventName = client.connectionsMade == 0
+                      ? 'connected'
                       : 'reconnected';
 
         client.connectionsMade++;
@@ -303,7 +303,7 @@ function Client(stream, options) {
         // are gone!  We cannot say with any confidence which were processed by
         // Redis; perhaps some were processed but we never got the reply, or
         // perhaps all were processed but Redis is configured with less than
-        // 100% durable writes, etc.  
+        // 100% durable writes, etc.
         //
         // We punt to the user by calling their callback with an I/O error.
         // However, we provide enough information to allow the user to retry
@@ -312,13 +312,13 @@ function Client(stream, options) {
 
         if (client.connectionsMade > 1 && client.originalCommands.length > 0) {
             if (exports.debug) {
-                sys.debug("[RECONNECTION] some commands orphaned (" + 
+                sys.debug("[RECONNECTION] some commands orphaned (" +
                     client.originalCommands.length + "). notifying...");
             }
 
             client.callbackOrphanedCommandsWithError();
         }
-        
+
         client.originalCommands = [];
         client.flushQueuedCommands();
 
@@ -342,8 +342,8 @@ function Client(stream, options) {
 
     stream.addListener("end", function () {
         if (exports.debugMode && client.originalCommands.length > 0) {
-            sys.debug("Connection to redis closed with " + 
-                      client.originalCommands.length + 
+            sys.debug("Connection to redis closed with " +
+                      client.originalCommands.length +
                       " commands pending replies that will never arrive!");
         }
 
@@ -382,7 +382,7 @@ Client.prototype.close = function () {
 Client.prototype.onReply_ = function (reply) {
     this.flushQueuedCommands();
 
-    if (this.handlePublishedMessage_(reply)) 
+    if (this.handlePublishedMessage_(reply))
         return;
 
     var originalCommand = this.originalCommands.shift();
@@ -403,7 +403,7 @@ Client.prototype.onReply_ = function (reply) {
 };
 
 Client.prototype.handlePublishedMessage_ = function (reply) {
-    // We're looking for a multibulk resembling 
+    // We're looking for a multibulk resembling
     // ["message", "channelName", messageBuffer]; or
     // ["pmessage", "matchingPattern", "channelName", messageBuffer]
     // The latter is sent when the client subscribed to a channel by a pattern;
@@ -425,15 +425,15 @@ Client.prototype.handlePublishedMessage_ = function (reply) {
     if (!isMessage && !isPMessage)
         return false;
 
-    // This is tricky. We are returning true even though there 
+    // This is tricky. We are returning true even though there
     // might not be any callback called! This may happen when a
     // caller subscribes then unsubscribes while a published
     // message is in transit to us. When the message arrives, no
-    // one is there to consume it. In essence, as long as the 
+    // one is there to consume it. In essence, as long as the
     // reply type is a published message (see above), then we've
     // "handled" the reply.
-        
-    if (Object.getOwnPropertyNames(this.channelCallbacks).length == 0) 
+
+    if (Object.getOwnPropertyNames(this.channelCallbacks).length == 0)
         return true;
 
     var channelName, channelPattern, channelCallback, payload;
@@ -462,10 +462,10 @@ Client.prototype.handlePublishedMessage_ = function (reply) {
 function maybeAsNumber(str) {
     var value = parseInt(str, 10);
 
-    if (isNaN(value)) 
+    if (isNaN(value))
         value = parseFloat(str);
 
-    if (isNaN(value)) 
+    if (isNaN(value))
         return str;
 
     return value;
@@ -481,7 +481,7 @@ function maybeConvertReplyValue(commandName, reply) {
     // multiplexing_api:kqueue
     // process_id:11604
     // ..."
-    // 
+    //
     // We convert that to a JS object like:
     // { redis_version: '1.3.8'
     // , arch_bits: '64'
@@ -504,19 +504,19 @@ function maybeConvertReplyValue(commandName, reply) {
     // is a key and value for the Redis HASH.  We convert this into
     // a JS object.
 
-    if (commandName === 'hgetall' && 
+    if (commandName === 'hgetall' &&
         reply.type === MULTIBULK &&
         reply.value.length % 2 === 0) {
 
         var hash = {};
-        for (var i=0; i<reply.value.length; i += 2) 
+        for (var i=0; i<reply.value.length; i += 2)
             hash[reply.value[i].value] = reply.value[i + 1].value;
         return hash;
     }
 
     // Redis returns "+OK\r\n" to signify success.
     // We convert this into a JS boolean with value true.
-    
+
     if (reply.type === INLINE && reply.value.asciiSlice(0,2) === 'OK')
         return true;
 
@@ -542,7 +542,7 @@ function maybeConvertReplyValue(commandName, reply) {
 
 exports.maybeConvertReplyValue_ = maybeConvertReplyValue;
 
-var commands = [ 
+var commands = [
     "append",
     "auth",
     "bgsave",
@@ -737,8 +737,8 @@ Client.prototype.sendCommand = function () {
         this.requestBuffer.copy(outBuffer, 0, 0, offset);
         this.stream.write(outBuffer, 'binary');
 
-        if (exports.debugMode) 
-            sys.debug("[SEND] " + debugFilter(this.requestBuffer, offset) + 
+        if (exports.debugMode)
+            sys.debug("[SEND] " + debugFilter(this.requestBuffer, offset) +
                 " originalCommands = " + this.originalCommands.length);
     } else {
         var toEnqueue = new Buffer(offset);
@@ -747,7 +747,7 @@ Client.prototype.sendCommand = function () {
         this.queuedOriginalCommands.push(originalCommand);
 
         if (exports.debugMode) {
-            sys.debug("[ENQUEUE] Not connected. Request queued. There are " + 
+            sys.debug("[ENQUEUE] Not connected. Request queued. There are " +
                 this.queuedRequestBuffers.length + " requests queued.");
         }
     }
@@ -757,7 +757,7 @@ commands.forEach(function (commandName) {
     Client.prototype[commandName] = function () {
         var args = Array.prototype.slice.call(arguments);
         // [[1,2,3],function(){}] => [1,2,3,function(){}]
-        if (args.length > 0 && Array.isArray(args[0])) 
+        if (args.length > 0 && Array.isArray(args[0]))
           args = args.shift().concat(args);
         args.unshift(commandName);
         this.sendCommand.apply(this, args);
@@ -767,8 +767,8 @@ commands.forEach(function (commandName) {
 // Send any commands that were queued while we were not connected.
 
 Client.prototype.flushQueuedCommands = function () {
-    if (exports.debugMode && this.queuedRequestBuffers.length > 0) 
-        sys.debug("[FLUSH QUEUE] " + this.queuedRequestBuffers.length + 
+    if (exports.debugMode && this.queuedRequestBuffers.length > 0)
+        sys.debug("[FLUSH QUEUE] " + this.queuedRequestBuffers.length +
                   " queued request buffers.");
 
     for (var i=0; i<this.queuedRequestBuffers.length && this.stream.writable; ++i) {
@@ -776,9 +776,9 @@ Client.prototype.flushQueuedCommands = function () {
         this.stream.write(buffer, 'binary');
         this.originalCommands.push(this.queuedOriginalCommands.shift());
 
-        if (exports.debugMode) 
-            sys.debug("[DEQUEUE/SEND] " + debugFilter(buffer) + 
-                      ". queued buffers remaining = " + 
+        if (exports.debugMode)
+            sys.debug("[DEQUEUE/SEND] " + debugFilter(buffer) +
+                      ". queued buffers remaining = " +
                       this.queuedRequestBuffers.length);
     }
 };
@@ -791,18 +791,18 @@ Client.prototype.makeErrorForCommand = function (command, errorMessage) {
 
 Client.prototype.callbackCommandWithError = function (command, errorMessage) {
     var callback = command[command.length - 1];
-    if (typeof callback == "function") 
+    if (typeof callback == "function")
         callback(this.makeErrorForCommand(command, errorMessage));
 };
 
 Client.prototype.callbackOrphanedCommandsWithError = function () {
-    for (var i=0, n=this.originalCommands.length; i<n; ++i) 
+    for (var i=0, n=this.originalCommands.length; i<n; ++i)
         this.callbackCommandWithError(this.originalCommands[i], exports.COMMAND_ORPHANED_ERROR);
     this.originalCommands = [];
 };
 
 Client.prototype.callbackQueuedCommandsWithError = function () {
-    for (var i=0, n=this.queuedOriginalCommands.length; i<n; ++i) 
+    for (var i=0, n=this.queuedOriginalCommands.length; i<n; ++i)
         this.callbackCommandWithError(this.queuedOriginalCommands[i], exports.NO_CONNECTION_ERROR);
     this.queuedOriginalCommands = [];
     this.queuedRequestBuffers = [];
@@ -823,7 +823,7 @@ Client.prototype.maybeReconnect = function () {
         return;
 
     // Do not reconnect on first connection failure.
-    // Else try to reconnect if we're asked to. 
+    // Else try to reconnect if we're asked to.
 
     if (this.connectionsMade == 0) {
         this.giveupConnectionAttempts();
@@ -834,7 +834,7 @@ Client.prototype.maybeReconnect = function () {
             this.reconnectionDelay *= 2;
 
             if (exports.debugMode) {
-                sys.debug("[RECONNECTING " + this.reconnectionAttempts + "/" + 
+                sys.debug("[RECONNECTING " + this.reconnectionAttempts + "/" +
                     this.maxReconnectionAttempts + "]");
 
                 sys.debug("[WAIT " + this.reconnectionDelay + " ms]");
@@ -853,14 +853,14 @@ Client.prototype.maybeReconnect = function () {
 // Wraps 'subscribe' and 'psubscribe' methods to manage a single
 // callback function per subscribed channel name/pattern.
 //
-// 'nameOrPattern' is a channel name like "hello" or a pattern like 
+// 'nameOrPattern' is a channel name like "hello" or a pattern like
 // "h*llo", "h?llo", or "h[ae]llo".
 //
-// 'callback' is a function that is called back with 2 args: 
+// 'callback' is a function that is called back with 2 args:
 // channel name/pattern and message payload.
 //
-// Note: You are not permitted to do anything but subscribe to 
-// additional channels or unsubscribe from subscribed channels 
+// Note: You are not permitted to do anything but subscribe to
+// additional channels or unsubscribe from subscribed channels
 // when there are >= 1 subscriptions active.  Should you need to
 // issue other commands, use a second client instance.
 
@@ -873,21 +873,21 @@ Client.prototype.subscribeTo = function (nameOrPattern, callback) {
 
     this.channelCallbacks[nameOrPattern] = callback;
 
-    var method = nameOrPattern.match(/[\*\?\[]/) 
-               ? "psubscribe" 
+    var method = nameOrPattern.match(/[\*\?\[]/)
+               ? "psubscribe"
                : "subscribe";
 
     this[method](nameOrPattern);
 };
 
 Client.prototype.unsubscribeFrom = function (nameOrPattern) {
-    if (typeof this.channelCallbacks[nameOrPattern] === 'undefined') 
+    if (typeof this.channelCallbacks[nameOrPattern] === 'undefined')
         return;
 
     delete this.channelCallbacks[nameOrPattern];
 
-    var method = nameOrPattern.match(/[\*\?\[]/) 
-               ? "punsubscribe" 
+    var method = nameOrPattern.match(/[\*\?\[]/)
+               ? "punsubscribe"
                : "unsubscribe";
 
     this[method](nameOrPattern);
@@ -899,13 +899,13 @@ Client.prototype.unsubscribeFrom = function (nameOrPattern) {
 
 exports.convertMultiBulkBuffersToUTF8Strings = function (o) {
     if (o instanceof Array) {
-        for (var i=0; i<o.length; ++i) 
-            if (o[i] instanceof Buffer) 
+        for (var i=0; i<o.length; ++i)
+            if (o[i] instanceof Buffer)
                 o[i] = o[i].utf8Slice(0, o[i].length);
     } else if (o instanceof Object) {
         var props = Object.getOwnPropertyNames(o);
-        for (var i=0; i<props.length; ++i) 
-            if (o[props[i]] instanceof Buffer) 
+        for (var i=0; i<props.length; ++i)
+            if (o[props[i]] instanceof Buffer)
                 o[props[i]] = o[props[i]].utf8Slice(0, o[props[i]].length);
     }
 };

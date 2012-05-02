@@ -9,7 +9,7 @@
     {% end %}
 
     <link rel="stylesheet" href="/static/style.css" type="text/css" media="screen" />
-   
+
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
     <script type="text/javascript">
       function initialize() {
@@ -25,7 +25,7 @@
     </script>
   </head>
    <body onload="initialize()">
-     
+
     <div id="header">
       <div class="container">
         <div id="header_logo">
@@ -38,8 +38,8 @@
           </div>
         </div>
       </div>
-    </div>   
-    
+    </div>
+
     <div id="container">
       <!-- <div id="content"> -->
       {% block header %}{% end %}
@@ -62,12 +62,12 @@
     var uservoiceOptions = {
       /* required */
       key: 'smshlp',
-      host: 'smshlp.uservoice.com', 
+      host: 'smshlp.uservoice.com',
       forum: '60813',
-      showTab: true,  
+      showTab: true,
       /* optional */
       alignment: 'left',
-      background_color: '#99b3cc', 
+      background_color: '#99b3cc',
       text_color: 'white',
       hover_color: '#9aab86',
       lang: 'en'
